@@ -16,14 +16,14 @@ function organize<A, B, C, D>(
 const fail = { success: false } as const
 const succeed = <T>(value: T) => ({ success: true, value })
 
-const then = <A, B>(next: FailableInteractor<A, B>, failable: Failable<A>): Failable<B> => {
+const then = <A, B>(next: FailableInteractor<A, B>) => (failable: Failable<A>): Failable<B> => {
     if (failable.success) {
         return next(failable.value)
     } else {
         return fail
     }
 }
-const always = <A, B>(next: Interactor<A, B>, failable: Failable<A>): Failable<B> => {
+const always = <A, B>(next: Interactor<A, B>) => (failable: Failable<A>): Failable<B> => {
     if (failable.success) {
         return succeed(next(failable.value))
     } else {
@@ -74,6 +74,6 @@ const sendOffer: FailableInteractor<Offer, void> = offer => {
 organize(
     "Tina",
     getShoppingCard,
-    context => always(calculateOffer, context),
-    context => then(sendOffer, context)
+    always(calculateOffer),
+    then(sendOffer)
 )
