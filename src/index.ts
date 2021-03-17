@@ -10,18 +10,19 @@ function organize<A, B, C, D>(
     b: FailableInteractor<B, C>,
     c: FailableInteractor<C, D>
 ) {
-    const resultA = a(startContext)
-    if (resultA.success) {
-        const resultB = b(resultA.value)
-
-        if (resultB.success) {
-            c(resultB.value)
-        }
-    }
+    then(c, then(b, a(startContext)))
 }
 
 const fail = { success: false } as const
 const succeed = <T>(value: T) => ({ success: true, value })
+
+const then = <A, B>(next: FailableInteractor<A, B>, failable: Failable<A>): Failable<B> => {
+    if (failable.success) {
+        return next(failable.value)
+    } else {
+        return fail
+    }
+}
 
 
 type User = string
