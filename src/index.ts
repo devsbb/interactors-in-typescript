@@ -19,3 +19,9 @@ const calculateOffer: Interactor = () => {
 const sendOffer: Interactor = () => {
     console.log("sending offer")
 }
+
+organize(
+    getShoppingCard,
+    calculateOffer,
+    sendOffer
+)
