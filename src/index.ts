@@ -23,6 +23,13 @@ const then = <A, B>(next: FailableInteractor<A, B>, failable: Failable<A>): Fail
         return fail
     }
 }
+const always = <A, B>(next: Interactor<A, B>, failable: Failable<A>): Failable<B> => {
+    if (failable.success) {
+        return succeed(next(failable.value))
+    } else {
+        return fail
+    }
+}
 
 
 type User = string
@@ -43,11 +50,11 @@ type Offer = {
     total: number
 }
 
-const calculateOffer: FailableInteractor<Cart, Offer> = cart => {
+const calculateOffer: Interactor<Cart, Offer> = cart => {
     console.log("calculating offer")
-    return succeed({
+    return {
         total: cart.reduce((total, item) => total + item.price, 0)
-    })
+    }
 }
 
 const internetIsBad = false
@@ -67,6 +74,6 @@ const sendOffer: FailableInteractor<Offer, void> = offer => {
 organize(
     "Tina",
     getShoppingCard,
-    context => then(calculateOffer, context),
+    context => always(calculateOffer, context),
     context => then(sendOffer, context)
 )
