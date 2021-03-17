@@ -6,11 +6,11 @@ type FailableInteractor<Before, After> = (contextBefore: Before) => Failable<Aft
 
 function organize<A, B, C, D>(
     startContext: A,
-    a: FailableInteractor<A, B>,
-    b: FailableInteractor<B, C>,
-    c: FailableInteractor<C, D>
+    a: Interactor<A, B>,
+    b: Interactor<B, C>,
+    c: Interactor<C, D>
 ) {
-    then(c, then(b, a(startContext)))
+    c(b(a(startContext)))
 }
 
 const fail = { success: false } as const
@@ -67,6 +67,6 @@ const sendOffer: FailableInteractor<Offer, void> = offer => {
 organize(
     "Tina",
     getShoppingCard,
-    calculateOffer,
-    sendOffer
+    context => then(calculateOffer, context),
+    context => then(sendOffer, context)
 )
