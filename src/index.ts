@@ -1,13 +1,11 @@
-type Interactor = {
-    call: () => void
-}
+type Interactor = () => void
 
 function organize(
     a: Interactor,
     b: Interactor,
     c: Interactor
 ) {
-    a.call()
-    b.call()
-    c.call()
+    a()
+    b()
+    c()
 }
